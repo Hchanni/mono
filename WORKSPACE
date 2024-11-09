@@ -1,4 +1,3 @@
-
 workspace(
   name="hchanni_monorepo"
 )
@@ -61,22 +60,26 @@ python_register_toolchains(
 # Still needs host level python 
 # Since this all happens at eval time a python
 # toolchain hasn't been resolved yet bruh
+
+load("@rules_python//python:pip.bzl", "pip_parse")
+
+# Add this load statement
+load("@python_3_11//:defs.bzl", "interpreter")
+
 pip_parse(
-    name = "pypi_channi",
-    python_interpreter_target = "@python_3_11_host//:python",
+    name = "pip",
+    python_interpreter_target = interpreter,
     requirements_lock = "//utils/python:requirements.txt",
 )
 
 # Load the starlark macro which will define your dependencies.
-load("@pypi_channi//:requirements.bzl","install_deps")
+load("@pip//:requirements.bzl","install_deps")
 
 # Call it to define repos for your requirements.
 install_deps()
 
 
-
 ## Seeting up Golang 
-
 
 http_archive(
     name = "io_bazel_rules_go",

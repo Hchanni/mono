@@ -1,1 +1,7 @@
 .channi/
+MODULE.bazel.lock
+bazel-bin/
+bazel-mono/
+bazel-out/
+bazel-testlogs/
+
