@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Just run a source setup
+
+REPO_ROOT=$(pwd)
+echo $REPO_ROOT
+
+# Create virtual environment if it doesn't exist
+if [ ! -d "$REPO_ROOT/.channi" ]; then
+    echo "Creating Virtual Environment"
+    python3 -m venv "$REPO_ROOT/.channi"
+fi
+
+# Check if activate script exists before sourcing
+if [ -f "$REPO_ROOT/.channi/bin/activate" ]; then
+    source "$REPO_ROOT/.channi/bin/activate"
+else
+    echo "Error: Virtual environment activation script not found"
+    exit 1
+fi
+
+REQUIREMENTS_LOCK="${REPO_ROOT}/utils/python/requirements.txt"
+
+# Install requirements if they exist
+if [ -f "${REQUIREMENTS_LOCK}" ]; then
+    echo "Installing requirements..."
+    pip install -r "${REQUIREMENTS_LOCK}"
+fi
+
+# Update PATH to include project bin directories
+export PATH="${REPO_ROOT}/bin:${PATH}"
+
+# Add all project bin directories
+while read -r DIR; do
+    export PATH="${PATH}:$(realpath "${DIR}")"
+done < <(find "${REPO_ROOT}/projects" -type d -name "bin" 2>/dev/null || true)
+
+# Handle pip upgrade notice (optional)
+pip install --upgrade pip
+
+echo "Setup Complete!"
+echo "Virtual environment is active"
+echo "Bin directories are added to PATH"

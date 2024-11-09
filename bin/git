@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # Store the original git path
-REAL_GIT=$(command git)
-
+REAL_GIT=$(command -v -p git)
 # Function to handle different git commands
 handle_git_command() {
     local cmd=$1
