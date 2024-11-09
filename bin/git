@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Store the original git path
+REAL_GIT=$(command -v -p git)
+# Function to handle different git commands
+handle_git_command() {
+    local cmd=$1
+    shift  # Remove first argument, leaving remaining args in $@
+
+    case "$cmd" in
+        "push")
+            handle_push_command "$@"
+            ;;
+        "commit")
+            handle_commit_command "$@"
+            ;;
+        *)
+            # Pass through to original git for unhandled commands
+            $REAL_GIT "$cmd" "$@"
+            ;;
+    esac
+}
+
+# Individual command handlers
+handle_push_command() {
+    echo "Running custom push logic"
+    $REAL_GIT push "$@"
+}
+
+handle_commit_command() {
+    echo "Running custom commit logic"
+    $REAL_GIT commit "$@"
+}
+
+# Main execution
+handle_git_command "$@"
