@@ -90,8 +90,33 @@ http_archive(
     ],
 )
 
-load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies", "go_download_sdk", "go_register_toolchains")
 
-go_rules_dependencies()
+go_download_sdk(
+    name = "go_sdk",
+    version = "1.23.4",
+)
 
-go_register_toolchains(version = "1.22")
+
+go_register_toolchains()
+
+### GAZELLE....
+
+http_archive(
+    name = "bazel_gazelle",
+    integrity = "sha256-12v3pg/YsFBEQJDfooN6Tq+YKeEWVhjuNdzspcvfWNU=",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.37.0/bazel-gazelle-v0.37.0.tar.gz",
+        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.37.0/bazel-gazelle-v0.37.0.tar.gz",
+    ],
+)
+
+load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies", "go_repository")
+load("//tools/rules:go_repositories.bzl","go_repositories")
+
+
+## This does the whole loading of all of them for us.
+go_repositories()
+
+
+gazelle_dependencies(go_sdk = "go_sdk")
